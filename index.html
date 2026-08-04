@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Smart PDF Tools</title>
+    <meta name="theme-color" content="#243ca7">
+    <link rel="icon" href="assets/smart-pdf-tools-mark.svg" type="image/svg+xml">
+    <link rel="stylesheet" href="style.css">
+    <!-- PDF Processing Libraries -->
+    <script src="https://unpkg.com/pdf-lib@1.17.1/dist/pdf-lib.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
+</head>
+<body>
+
+    <header class="site-header">
+        <a class="brand" href="/" aria-label="Smart PDF Tools home">
+            <span class="brand-mark" aria-hidden="true">
+                <img src="assets/smart-pdf-tools-mark.svg" alt="">
+            </span>
+            <span class="brand-name"><strong>Smart</strong><span>PDF Tools</span></span>
+        </a>
+        <p>Fast, free, and secure online tools for your documents</p>
+    </header>
+
+    <main class="container">
+        <!-- Navigation Tabs -->
+        <div class="tabs">
+            <button class="tab-btn active" onclick="switchTab('compress', this)">🗜️ Compress PDF</button>
+            <button class="tab-btn" onclick="switchTab('imgToPdf', this)">🖼️ Image to PDF</button>
+            <button class="tab-btn" onclick="switchTab('merge', this)">📑 Merge PDFs</button>
+            <button class="tab-btn" onclick="switchTab('editPdf', this)">✏️ Edit / Watermark PDF</button>
+            <button class="tab-btn translate-tab" onclick="switchTab('translatePdf', this)">🌍 Translate PDF</button>
+        </div>
+
+        <!-- Tool 1: Compress PDF -->
+        <section id="compress" class="tool-card active-tab">
+            <h2>Compress PDF</h2>
+            <p>Reduce PDF file sizes for applications, forms, and easy sharing.</p>
+            <div class="drop-zone">
+                <input type="file" id="compressInput" accept="application/pdf">
+                <p>Choose a PDF file or drag and drop it here</p>
+            </div>
+            <button class="action-btn" onclick="processCompress()">Compress PDF</button>
+        </section>
+
+        <!-- Tool 2: Image to PDF -->
+        <section id="imgToPdf" class="tool-card">
+            <h2>Convert Images to PDF</h2>
+            <p>Instantly convert your JPG or PNG images into a PDF.</p>
+            <div class="drop-zone">
+                <input type="file" id="imgInput" accept="image/*" multiple>
+                <p>Choose one or more images</p>
+            </div>
+            <button class="action-btn" onclick="processImgToPdf()">Convert to PDF</button>
+        </section>
+
+        <!-- Tool 3: Merge PDF -->
+        <section id="merge" class="tool-card">
+            <h2>Merge PDFs</h2>
+            <p>Combine two or more PDF files into one document.</p>
+            <div class="drop-zone">
+                <input type="file" id="mergeInput" accept="application/pdf" multiple>
+                <p>Select all the PDF files you want to combine</p>
+            </div>
+            <button class="action-btn" onclick="processMerge()">Merge PDFs</button>
+        </section>
+
+        <!-- Tool 4: Edit & Watermark PDF -->
+        <section id="editPdf" class="tool-card">
+            <h2>PDF Edit & Watermark</h2>
+            <p>Add custom text or a watermark to your PDF.</p>
+            <div class="drop-zone">
+                <input type="file" id="editInput" accept="application/pdf">
+                <p>Choose a PDF file</p>
+            </div>
+            
+            <div class="edit-options">
+                <label for="watermarkText">Watermark Text:</label>
+                <input type="text" id="watermarkText" placeholder="e.g. CONFIDENTIAL or your name">
+            </div>
+
+            <button class="action-btn" onclick="processEditPdf()">Apply Changes & Save</button>
+        </section>
+
+        <!-- Tool 5: Translate PDF -->
+        <section id="translatePdf" class="tool-card translation-card">
+            <div class="translation-heading">
+                <span class="translation-badge">AI translation</span>
+                <h2>Translate PDF to Any Language</h2>
+                <p>Turn a text-based PDF into a clean translated document, from virtually any written language to another.</p>
+            </div>
+
+            <div class="drop-zone translate-drop-zone">
+                <input type="file" id="translateInput" accept="application/pdf">
+                <span class="upload-icon" aria-hidden="true">文</span>
+                <p>Choose a text-based PDF to translate</p>
+                <small>Up to 15 MB or 75 pages. Scanned PDFs need OCR before translation.</small>
+            </div>
+
+            <div class="language-grid">
+                <div class="field-group">
+                    <label for="sourceLanguage">Translate from</label>
+                    <input id="sourceLanguage" type="text" list="languageOptions" value="Auto-detect" placeholder="Auto-detect or enter a language">
+                </div>
+                <div class="language-swap" aria-hidden="true">→</div>
+                <div class="field-group">
+                    <label for="targetLanguage">Translate to</label>
+                    <input id="targetLanguage" type="text" list="languageOptions" placeholder="Enter any language, e.g. Japanese">
+                </div>
+            </div>
+
+            <datalist id="languageOptions">
+                <option value="Auto-detect"></option>
+                <option value="Arabic"></option>
+                <option value="Bengali"></option>
+                <option value="Chinese (Simplified)"></option>
+                <option value="Chinese (Traditional)"></option>
+                <option value="Dutch"></option>
+                <option value="English"></option>
+                <option value="French"></option>
+                <option value="German"></option>
+                <option value="Greek"></option>
+                <option value="Gujarati"></option>
+                <option value="Hebrew"></option>
+                <option value="Hindi"></option>
+                <option value="Indonesian"></option>
+                <option value="Italian"></option>
+                <option value="Japanese"></option>
+                <option value="Korean"></option>
+                <option value="Marathi"></option>
+                <option value="Persian"></option>
+                <option value="Polish"></option>
+                <option value="Portuguese"></option>
+                <option value="Punjabi"></option>
+                <option value="Russian"></option>
+                <option value="Spanish"></option>
+                <option value="Swahili"></option>
+                <option value="Tamil"></option>
+                <option value="Telugu"></option>
+                <option value="Thai"></option>
+                <option value="Turkish"></option>
+                <option value="Ukrainian"></option>
+                <option value="Urdu"></option>
+                <option value="Vietnamese"></option>
+            </datalist>
+
+            <div id="translationStatus" class="translation-status" role="status" aria-live="polite" hidden>
+                <div class="status-row">
+                    <span id="translationStatusText">Reading your PDF…</span>
+                    <strong id="translationPercent">0%</strong>
+                </div>
+                <div class="progress-track"><span id="translationProgress"></span></div>
+            </div>
+            <p id="translationError" class="inline-error" role="alert" hidden></p>
+
+            <button id="translateButton" class="action-btn translate-action" onclick="processTranslatePdf()">
+                <span>Translate &amp; Download PDF</span>
+            </button>
+            <p class="privacy-note">🔒 Your original PDF stays in your browser. Only extracted text is sent securely for translation.</p>
+        </section>
+
+        <!-- Result / Download Section -->
+        <div id="output" class="output-box" style="display: none;">
+            <h3>✅ Process Complete!</h3>
+            <a id="downloadBtn" class="download-link" href="#" download>Download Processed File</a>
+        </div>
+    </main>
+
+    <footer>
+        <p>© 2026 Smart PDF Tools | Fast, secure document tools</p>
+    </footer>
+
+    <script src="script.js"></script>
+</body>
+</html>

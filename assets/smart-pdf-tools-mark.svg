@@ -1,0 +1,19 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" role="img" aria-labelledby="title desc">
+  <title id="title">Smart PDF Tools logo mark</title>
+  <desc id="desc">A folded document with three streamlined tool lines.</desc>
+  <defs>
+    <linearGradient id="paper" x1="12" y1="8" x2="53" y2="56" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#ffffff"/>
+      <stop offset="1" stop-color="#dfe9ff"/>
+    </linearGradient>
+    <linearGradient id="accent" x1="19" y1="39" x2="47" y2="39" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#32d6a0"/>
+      <stop offset="1" stop-color="#79f0c6"/>
+    </linearGradient>
+  </defs>
+  <path d="M17 5h22l13 13v34a7 7 0 0 1-7 7H17a7 7 0 0 1-7-7V12a7 7 0 0 1 7-7Z" fill="url(#paper)"/>
+  <path d="M39 5v10a5 5 0 0 0 5 5h8" fill="#bfd1ff"/>
+  <path d="m39 5 13 13h-8a5 5 0 0 1-5-5V5Z" fill="#cbd9ff"/>
+  <path d="M20 31h24M20 39h24M20 47h15" fill="none" stroke="url(#accent)" stroke-width="4" stroke-linecap="round"/>
+  <circle cx="44" cy="47" r="4" fill="#32d6a0"/>
+</svg>
