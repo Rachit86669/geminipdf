@@ -61,6 +61,8 @@ header {
     display: block;
     width: 100%;
     height: 100%;
+    object-fit: contain; /* ensure different aspect ratios fit without distortion */
+    object-position: center;
 }
 
 .brand-name {
