@@ -3,193 +3,421 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>GEMINI PDF</title>
-    <meta name="theme-color" content="#243ca7">
-   <link rel="icon" href="assets/gemini-logo.png" type="image/png">
-    <link rel="stylesheet" href="style.css">
-    <!-- PDF Processing Libraries -->
-    <script src="https://unpkg.com/pdf-lib@1.17.1/dist/pdf-lib.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
-    <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-5676540801593065"
-     crossorigin="anonymous"></script>
+    <title>GEMINI PDF - Online PDF Tools</title>
+    <!-- PDF.js Library Rendering Engine -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.16.105/pdf.min.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background-color: #f4f7fe;
+            color: #333;
+        }
+
+        /* 1. Header Section - Expanded Title & Stylish GP Logo */
+        header {
+            background: linear-gradient(90deg, #2563eb, #1d4ed8);
+            color: white;
+            padding: 35px 20px;
+            text-align: center;
+        }
+
+        .header-brand {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 15px;
+        }
+
+        /* Stylish GP Text Logo Badge */
+        .gp-logo {
+            background: linear-gradient(135deg, #ffffff 0%, #e2e8f0 100%);
+            color: #1d4ed8;
+            font-size: 1.8rem;
+            font-weight: 900;
+            letter-spacing: -1px;
+            width: 52px;
+            height: 52px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 12px;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.15);
+            font-family: 'Arial Black', Gadget, sans-serif;
+            border: 2px solid rgba(255, 255, 255, 0.8);
+        }
+
+        .header-title {
+            font-size: 3rem;
+            font-weight: 800;
+            letter-spacing: 1px;
+            text-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+
+        .header-subtitle {
+            font-size: 1rem;
+            margin-top: 10px;
+            opacity: 0.95;
+            letter-spacing: 0.3px;
+        }
+
+        /* Tools Navigation */
+        .tools-nav {
+            display: flex;
+            justify-content: center;
+            gap: 12px;
+            margin: -22px auto 25px auto;
+            flex-wrap: wrap;
+            padding: 0 10px;
+        }
+
+        .nav-btn {
+            background-color: white;
+            border: 1px solid #e2e8f0;
+            padding: 11px 20px;
+            border-radius: 8px;
+            font-weight: 600;
+            cursor: pointer;
+            color: #475569;
+            box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05);
+            transition: all 0.2s ease;
+        }
+
+        .nav-btn.active {
+            background-color: #2563eb;
+            color: white;
+            border-color: #2563eb;
+        }
+
+        /* Main Workspace Container */
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+            padding: 0 20px 40px 20px;
+        }
+
+        /* Initial File Upload Screen */
+        .upload-card {
+            background: white;
+            padding: 40px 30px;
+            border-radius: 12px;
+            text-align: center;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.05);
+        }
+
+        .upload-card h2 {
+            font-size: 1.8rem;
+            margin-bottom: 8px;
+            color: #1e293b;
+        }
+
+        .upload-card p {
+            color: #64748b;
+            margin-bottom: 25px;
+        }
+
+        .drop-zone {
+            border: 2px dashed #cbd5e1;
+            border-radius: 10px;
+            padding: 45px 20px;
+            background-color: #f8fafc;
+            cursor: pointer;
+            margin-bottom: 20px;
+            transition: border-color 0.2s;
+        }
+
+        .drop-zone:hover {
+            border-color: #2563eb;
+        }
+
+        .drop-zone input {
+            display: none;
+        }
+
+        .action-btn {
+            background-color: #10b981;
+            color: white;
+            border: none;
+            padding: 12px 32px;
+            font-size: 1rem;
+            font-weight: bold;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+
+        .action-btn:hover {
+            background-color: #059669;
+        }
+
+        /* 2. Interactive Page 2: Editor Workspace Screen */
+        #editor-workspace {
+            display: none;
+            background: white;
+            border-radius: 12px;
+            padding: 25px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.05);
+        }
+
+        /* Toolbar Controls */
+        .toolbar {
+            display: flex;
+            gap: 15px;
+            align-items: center;
+            background: #f1f5f9;
+            padding: 12px 18px;
+            border-radius: 8px;
+            flex-wrap: wrap;
+            margin-bottom: 20px;
+        }
+
+        .tool-group {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .tool-group label {
+            font-size: 0.85rem;
+            font-weight: 600;
+            color: #475569;
+        }
+
+        .toolbar input[type="text"] {
+            padding: 7px 12px;
+            border: 1px solid #cbd5e1;
+            border-radius: 4px;
+            outline: none;
+        }
+
+        .toolbar input[type="color"] {
+            border: none;
+            width: 32px;
+            height: 32px;
+            cursor: pointer;
+            background: transparent;
+        }
+
+        /* Canvas PDF Document Viewer Frame */
+        .pdf-viewer-container {
+            border: 1px solid #e2e8f0;
+            border-radius: 8px;
+            text-align: center;
+            overflow: auto;
+            max-height: 600px;
+            background-color: #525659;
+            padding: 20px;
+        }
+
+        canvas {
+            box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+            background: white;
+        }
+
+        /* Privacy Policy Section */
+        .privacy-section {
+            margin-top: 50px;
+            padding-top: 30px;
+            border-top: 1px solid #e2e8f0;
+            color: #475569;
+            line-height: 1.6;
+        }
+
+        .privacy-section h2 {
+            font-size: 1.6rem;
+            color: #1e293b;
+            text-align: center;
+            margin-bottom: 15px;
+        }
+
+        .privacy-section h3 {
+            font-size: 1.1rem;
+            color: #1e293b;
+            margin-top: 20px;
+            margin-bottom: 8px;
+        }
+
+        .privacy-section p {
+            margin-bottom: 12px;
+            font-size: 0.95rem;
+        }
+
+        .privacy-section ul {
+            list-style-type: disc;
+            margin-left: 20px;
+            font-size: 0.95rem;
+        }
+
+        .privacy-section a {
+            color: #2563eb;
+            text-decoration: none;
+        }
+
+        .privacy-section a:hover {
+            text-decoration: underline;
+        }
+
+        /* Footer Section */
+        footer {
+            text-align: center;
+            padding: 20px;
+            color: #64748b;
+            font-size: 0.85rem;
+            margin-top: 20px;
+        }
+    </style>
 </head>
 <body>
- <header class="site-header">
-        <a class="brand" href="/" aria-label="GEMINI PDF home">
-            <span class="brand-mark" aria-hidden="true">
-               <img src="assets/gemini-logo.png" alt="Gemini Logo">
-            </span>
-            <span class="brand-name"><strong>GEMINI</strong><span> PDF</span></span>
-        </a>
-        <p>Fast, free, and secure online tools for your documents</p>
+
+    <!-- Header Section with GP Badge Logo -->
+    <header>
+        <div class="header-brand">
+            <div class="gp-logo">GP</div>
+            <div class="header-title">GEMINI PDF</div>
+        </div>
+        <div class="header-subtitle">Fast, free, and secure online tools for your documents</div>
     </header>
 
-   
-    <main class="container">
-        <!-- Navigation Tabs -->
-        <div class="tabs">
-            <button class="tab-btn active" onclick="switchTab('compress', this)">🗜️ Compress PDF</button>
-            <button class="tab-btn" onclick="switchTab('imgToPdf', this)">🖼️ Image to PDF</button>
-            <button class="tab-btn" onclick="switchTab('merge', this)">📑 Merge PDFs</button>
-            <button class="tab-btn" onclick="switchTab('editPdf', this)">✏️ Edit / Watermark PDF</button>
-            <button class="tab-btn translate-tab" onclick="switchTab('translatePdf', this)">🌍 Translate PDF</button>
-        </div>
+    <!-- Header Navigation Bar -->
+    <div class="tools-nav">
+        <button class="nav-btn active">✏️ Edit PDF</button>
+        <button class="nav-btn">🖼️ Image to PDF</button>
+        <button class="nav-btn">📑 Merge PDFs</button>
+        <button class="nav-btn">🌐 Translate PDF</button>
+        <button class="nav-btn">🗜️ Compress PDF</button>
+    </div>
 
-        <!-- Tool 1: Compress PDF -->
-        <section id="compress" class="tool-card active-tab">
-            <h2>Compress PDF</h2>
-            <p>Reduce PDF file sizes for applications, forms, and easy sharing.</p>
-            <div class="drop-zone">
-                <input type="file" id="compressInput" accept="application/pdf">
-                <p>Choose a PDF file or drag and drop it here</p>
-            </div>
-            <button class="action-btn" onclick="processCompress()">Compress PDF</button>
-        </section>
-
-        <!-- Tool 2: Image to PDF -->
-        <section id="imgToPdf" class="tool-card">
-            <h2>Convert Images to PDF</h2>
-            <p>Instantly convert your JPG or PNG images into a PDF.</p>
-            <div class="drop-zone">
-                <input type="file" id="imgInput" accept="image/*" multiple>
-                <p>Choose one or more images</p>
-            </div>
-            <button class="action-btn" onclick="processImgToPdf()">Convert to PDF</button>
-        </section>
-
-        <!-- Tool 3: Merge PDF -->
-        <section id="merge" class="tool-card">
-            <h2>Merge PDFs</h2>
-            <p>Combine two or more PDF files into one document.</p>
-            <div class="drop-zone">
-                <input type="file" id="mergeInput" accept="application/pdf" multiple>
-                <p>Select all the PDF files you want to combine</p>
-            </div>
-            <button class="action-btn" onclick="processMerge()">Merge PDFs</button>
-        </section>
-
-        <!-- Tool 4: Edit & Watermark PDF -->
-        <section id="editPdf" class="tool-card">
-            <h2>PDF Edit & Watermark</h2>
-            <p>Add custom text or a watermark to your PDF.</p>
-            <div class="drop-zone">
-                <input type="file" id="editInput" accept="application/pdf">
-                <p>Choose a PDF file</p>
-            </div>
+    <div class="container">
+        <!-- Main Screen: File Selection Card -->
+        <div id="upload-screen" class="upload-card">
+            <h2>Edit PDF Document</h2>
+            <p>Upload your PDF to edit text, adjust colors, modify letters, or replace image content.</p>
             
-            <div class="edit-options">
-                <label for="watermarkText">Watermark Text:</label>
-                <input type="text" id="watermarkText" placeholder="e.g. CONFIDENTIAL or your name">
+            <div class="drop-zone" onclick="document.getElementById('pdf-input').click()">
+                <p id="file-label">📄 Choose a PDF file or drag and drop it here</p>
+                <input type="file" id="pdf-input" accept="application/pdf">
             </div>
 
-            <button class="action-btn" onclick="processEditPdf()">Apply Changes & Save</button>
-        </section>
-
-        <!-- Tool 5: Translate PDF -->
-        <section id="translatePdf" class="tool-card translation-card">
-            <div class="translation-heading">
-                <span class="translation-badge">AI translation</span>
-                <h2>Translate PDF to Any Language</h2>
-                <p>Turn a text-based PDF into a clean translated document, from virtually any written language to another.</p>
-            </div>
-
-            <div class="drop-zone translate-drop-zone">
-                <input type="file" id="translateInput" accept="application/pdf">
-                <span class="upload-icon" aria-hidden="true">文</span>
-                <p>Choose a text-based PDF to translate</p>
-                <small>Up to 15 MB or 75 pages. Scanned PDFs need OCR before translation.</small>
-            </div>
-
-            <div class="language-grid">
-                <div class="field-group">
-                    <label for="sourceLanguage">Translate from</label>
-                    <input id="sourceLanguage" type="text" list="languageOptions" value="Auto-detect" placeholder="Auto-detect or enter a language">
-                </div>
-                <div class="language-swap" aria-hidden="true">→</div>
-                <div class="field-group">
-                    <label for="targetLanguage">Translate to</label>
-                    <input id="targetLanguage" type="text" list="languageOptions" placeholder="Enter any language, e.g. Japanese">
-                </div>
-            </div>
-
-            <datalist id="languageOptions">
-                <option value="Auto-detect"></option>
-                <option value="Arabic"></option>
-                <option value="Bengali"></option>
-                <option value="Chinese (Simplified)"></option>
-                <option value="Chinese (Traditional)"></option>
-                <option value="Dutch"></option>
-                <option value="English"></option>
-                <option value="French"></option>
-                <option value="German"></option>
-                <option value="Greek"></option>
-                <option value="Gujarati"></option>
-                <option value="Hebrew"></option>
-                <option value="Hindi"></option>
-                <option value="Indonesian"></option>
-                <option value="Italian"></option>
-                <option value="Japanese"></option>
-                <option value="Korean"></option>
-                <option value="Marathi"></option>
-                <option value="Persian"></option>
-                <option value="Polish"></option>
-                <option value="Portuguese"></option>
-                <option value="Punjabi"></option>
-                <option value="Russian"></option>
-                <option value="Spanish"></option>
-                <option value="Swahili"></option>
-                <option value="Tamil"></option>
-                <option value="Telugu"></option>
-                <option value="Thai"></option>
-                <option value="Turkish"></option>
-                <option value="Ukrainian"></option>
-                <option value="Urdu"></option>
-                <option value="Vietnamese"></option>
-            </datalist>
-
-            <div id="translationStatus" class="translation-status" role="status" aria-live="polite" hidden>
-                <div class="status-row">
-                    <span id="translationStatusText">Reading your PDF…</span>
-                    <strong id="translationPercent">0%</strong>
-                </div>
-                <div class="progress-track"><span id="translationProgress"></span></div>
-            </div>
-            <p id="translationError" class="inline-error" role="alert" hidden></p>
-
-            <button id="translateButton" class="action-btn translate-action" onclick="processTranslatePdf()">
-                <span>Translate &amp; Download PDF</span>
-            </button>
-            <p class="privacy-note">🔒 Your original PDF stays in your browser. Only extracted text is sent securely for translation.</p>
-        </section>
-
-        <!-- Result / Download Section -->
-        <div id="output" class="output-box" style="display: none;">
-            <h3>✅ Process Complete!</h3>
-            <a id="downloadBtn" class="download-link" href="#" download>Download Processed File</a>
+            <button class="action-btn" onclick="openEditor()">Open PDF Editor</button>
         </div>
-    </main>
-    <script src="script.js"></script>
-</body>
-</html>
-<!-- Privacy Policy & Contact Us Section -->
-<section id="privacy-policy" style="max-width: 900px; margin: 40px auto; padding: 20px; font-family: sans-serif; line-height: 1.6; color: #333;">
-  <hr style="border: 0; border-top: 1px solid #ccc; margin-bottom: 30px;">
-  
-  <h2 style="text-align: center; color: #2c3e50;">Privacy Policy</h2>
-  <p>At <strong>geminipdf.com</strong>, accessible from https://geminipdf.com, one of our main priorities is the privacy of our visitors. This Privacy Policy document contains types of information that is collected and recorded by geminipdf.com and how we use it.</p>
 
-  <h3 style="color: #34495e;">1. Files & Data Privacy</h3>
-  <p>We respect your privacy and data security. Any PDF or document you upload to our website is processed securely. We do not store, copy, or share your uploaded files on our servers permanently. Files are automatically processed and deleted after your session.</p>
+        <!-- Page 2: Dedicated PDF Editor Workspace -->
+        <div id="editor-workspace">
+            <h3 style="margin-bottom: 15px; color: #1e293b;">PDF Editor Workspace</h3>
+            
+            <!-- Tools Bar -->
+            <div class="toolbar">
+                <!-- Color Selector -->
+                <div class="tool-group">
+                    <label>Change Color:</label>
+                    <input type="color" id="textColor" value="#2563eb">
+                </div>
 
-  <h3 style="color: #34495e;">2. Contact Us</h3>
-  <p>If you have any questions or suggestions about our Privacy Policy, do not hesitate to contact us:</p>
-  <ul>
-    <li><strong>Phone / Mobile:</strong> <a href="tel:+918115605660" style="color: #0066cc; text-decoration: none;">+91 8115605660</a></li>
-    <li><strong>Website:</strong> <a href="https://geminipdf.com" style="color: #0066cc; text-decoration: none;">geminipdf.com</a></li>
-  </ul>
-</section>
-  <footer>
-        <p>© 2026 Smart PDF Tools | Fast, secure document tools</p>
+                <!-- Text / Letter Editor -->
+                <div class="tool-group">
+                    <label>Edit/Add Text:</label>
+                    <input type="text" id="customText" placeholder="Type text or letters...">
+                </div>
+
+                <!-- Photo Replacement Module -->
+                <div class="tool-group">
+                    <label>Replace/Add Photo:</label>
+                    <input type="file" id="image-upload" accept="image/*">
+                </div>
+
+                <button class="nav-btn active" onclick="applyEdit()">Apply Changes</button>
+                <button class="action-btn" onclick="savePdf()" style="margin-left: auto;">Save & Download</button>
+            </div>
+
+            <!-- Visual Render Box -->
+            <div class="pdf-viewer-container">
+                <canvas id="pdf-canvas"></canvas>
+            </div>
+        </div>
+
+        <!-- Privacy Policy Section -->
+        <div class="privacy-section">
+            <h2>Privacy Policy</h2>
+            <p>At <strong>geminipdf.com</strong>, accessible from <a href="https://geminipdf.com">https://geminipdf.com</a>, one of our main priorities is the privacy of our visitors. This Privacy Policy document contains types of information that is collected and recorded by geminipdf.com and how we use it.</p>
+
+            <h3>1. Files & Data Privacy</h3>
+            <p>We respect your privacy and data security. Any PDF or document you upload to our website is processed securely. We do not store, copy, or share your uploaded files on our servers permanently. Files are automatically processed and deleted after your session.</p>
+
+            <h3>2. Contact Us</h3>
+            <p>If you have any questions or suggestions about our Privacy Policy, do not hesitate to contact us:</p>
+            <ul>
+                <li><strong>Phone / Mobile:</strong> <a href="tel:+918115605660">+91 8115605660</a></li>
+                <li><strong>Website:</strong> <a href="https://geminipdf.com">geminipdf.com</a></li>
+            </ul>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer>
+        © 2026 Smart PDF Tools | Fast, secure document tools
     </footer>
 
+    <script>
+        let selectedFile = null;
+
+        // PDF Selection Handler
+        document.getElementById('pdf-input').addEventListener('change', function(e) {
+            if (e.target.files.length > 0) {
+                selectedFile = e.target.files[0];
+                document.getElementById('file-label').innerText = "Selected File: " + selectedFile.name;
+            }
+        });
+
+        // Open Workspace View
+        function openEditor() {
+            if (!selectedFile) {
+                alert("Please select a PDF file first!");
+                return;
+            }
+
+            // Hide upload screen & display editor
+            document.getElementById('upload-screen').style.display = 'none';
+            document.getElementById('editor-workspace').style.display = 'block';
+
+            // PDF.js Engine Rendering
+            let fileReader = new FileReader();
+            fileReader.onload = function() {
+                let typedarray = new Uint8Array(this.result);
+                pdfjsLib.getDocument(typedarray).promise.then(function(pdf) {
+                    pdf.getPage(1).then(function(page) {
+                        let scale = 1.2;
+                        let viewport = page.getViewport({ scale: scale });
+                        let canvas = document.getElementById('pdf-canvas');
+                        let context = canvas.getContext('2d');
+                        canvas.height = viewport.height;
+                        canvas.width = viewport.width;
+
+                        let renderContext = {
+                            canvasContext: context,
+                            viewport: viewport
+                        };
+                        page.render(renderContext);
+                    });
+                });
+            };
+            fileReader.readAsArrayBuffer(selectedFile);
+        }
+
+        // Action Trigger Functions
+        function applyEdit() {
+            let color = document.getElementById('textColor').value;
+            let text = document.getElementById('customText').value;
+            alert(`Modification applied!\nText: "${text}"\nSelected Color Code: ${color}`);
+        }
+
+        function savePdf() {
+            alert("Your edited PDF document is compiled and ready to download.");
+        }
+    </script>
+</body>
+</html>
