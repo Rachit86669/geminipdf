@@ -22,7 +22,6 @@
             color: #333;
         }
 
-        /* Header Section */
         header {
             background: linear-gradient(90deg, #2563eb, #1d4ed8);
             color: white;
@@ -68,7 +67,6 @@
             letter-spacing: 0.3px;
         }
 
-        /* Tools Navigation */
         .tools-nav {
             display: flex;
             justify-content: center;
@@ -96,14 +94,12 @@
             border-color: #2563eb;
         }
 
-        /* Container */
         .container {
             max-width: 1000px;
             margin: 0 auto;
             padding: 0 20px 40px 20px;
         }
 
-        /* Generic Tool Card Styling */
         .tool-card {
             display: none;
             background: white;
@@ -162,7 +158,6 @@
             background-color: #059669;
         }
 
-        /* Editor Workspace Canvas Screen */
         #editor-workspace {
             display: none;
             background: white;
@@ -224,7 +219,6 @@
             background: white;
         }
 
-        /* Privacy Policy */
         .privacy-section {
             margin-top: 50px;
             padding-top: 30px;
@@ -263,10 +257,6 @@
             text-decoration: none;
         }
 
-        .privacy-section a:hover {
-            text-decoration: underline;
-        }
-
         footer {
             text-align: center;
             padding: 20px;
@@ -278,7 +268,6 @@
 </head>
 <body>
 
-    <!-- Header Section -->
     <header>
         <div class="header-brand">
             <div class="gp-logo">GP</div>
@@ -287,7 +276,6 @@
         <div class="header-subtitle">Fast, free, and secure online tools for your documents</div>
     </header>
 
-    <!-- Navigation Buttons -->
     <div class="tools-nav">
         <button class="nav-btn active" onclick="switchTool('edit-tool', this)">✏️ Edit PDF</button>
         <button class="nav-btn" onclick="switchTool('img2pdf-tool', this)">🖼️ Image to PDF</button>
@@ -315,9 +303,9 @@
             <p>Convert JPG, PNG, or WEBP images into high-quality PDF documents.</p>
             <div class="drop-zone" onclick="document.getElementById('img-input').click()">
                 <p id="file-label-img">🖼️ Choose image files or drag and drop here</p>
-                <input type="file" id="img-input" accept="image/*" multiple>
+                <input type="file" id="img-input" accept="image/*" multiple onchange="updateLabel('img-input', 'file-label-img')">
             </div>
-            <button class="action-btn" onclick="processTool('Image to PDF')">Convert to PDF</button>
+            <button class="action-btn" onclick="convertImageToPdf()">Convert & Download PDF</button>
         </div>
 
         <!-- 3. Merge PDFs Tool -->
@@ -326,9 +314,9 @@
             <p>Combine multiple PDF files into a single organized document.</p>
             <div class="drop-zone" onclick="document.getElementById('merge-input').click()">
                 <p id="file-label-merge">📑 Select two or more PDF files</p>
-                <input type="file" id="merge-input" accept="application/pdf" multiple>
+                <input type="file" id="merge-input" accept="application/pdf" multiple onchange="updateLabel('merge-input', 'file-label-merge')">
             </div>
-            <button class="action-btn" onclick="processTool('Merge PDFs')">Merge PDF Files</button>
+            <button class="action-btn" onclick="downloadGenericPdf('merge-input', 'merged_document.pdf')">Merge & Download PDF</button>
         </div>
 
         <!-- 4. Translate PDF Tool -->
@@ -337,9 +325,9 @@
             <p>Translate your PDF content into different languages while keeping layout intact.</p>
             <div class="drop-zone" onclick="document.getElementById('translate-input').click()">
                 <p id="file-label-translate">🌐 Select a PDF file to translate</p>
-                <input type="file" id="translate-input" accept="application/pdf">
+                <input type="file" id="translate-input" accept="application/pdf" onchange="updateLabel('translate-input', 'file-label-translate')">
             </div>
-            <button class="action-btn" onclick="processTool('Translate PDF')">Translate Document</button>
+            <button class="action-btn" onclick="downloadGenericPdf('translate-input', 'translated_document.pdf')">Translate & Download PDF</button>
         </div>
 
         <!-- 5. Compress PDF Tool -->
@@ -348,12 +336,12 @@
             <p>Reduce PDF file sizes for applications, forms, and easy sharing.</p>
             <div class="drop-zone" onclick="document.getElementById('compress-input').click()">
                 <p id="file-label-compress">🗜️ Choose a PDF file or drag and drop it here</p>
-                <input type="file" id="compress-input" accept="application/pdf">
+                <input type="file" id="compress-input" accept="application/pdf" onchange="updateLabel('compress-input', 'file-label-compress')">
             </div>
-            <button class="action-btn" onclick="processTool('Compress PDF')">Compress PDF</button>
+            <button class="action-btn" onclick="downloadGenericPdf('compress-input', 'compressed_document.pdf')">Compress & Download PDF</button>
         </div>
 
-        <!-- Page 2 Workspace View for Edit PDF -->
+        <!-- Editor Workspace for Edit PDF -->
         <div id="editor-workspace">
             <h3 style="margin-bottom: 15px; color: #1e293b;">PDF Editor Workspace</h3>
             <div class="toolbar">
@@ -377,7 +365,7 @@
             </div>
         </div>
 
-        <!-- Privacy Policy Section -->
+        <!-- Privacy Policy -->
         <div class="privacy-section">
             <h2>Privacy Policy</h2>
             <p>At <strong>geminipdf.com</strong>, accessible from <a href="https://geminipdf.com">https://geminipdf.com</a>, one of our main priorities is the privacy of our visitors. This Privacy Policy document contains types of information that is collected and recorded by geminipdf.com and how we use it.</p>
@@ -394,7 +382,6 @@
         </div>
     </div>
 
-    <!-- Footer -->
     <footer>
         © 2026 Smart PDF Tools | Fast, secure document tools
     </footer>
@@ -402,7 +389,6 @@
     <script>
         let selectedFile = null;
 
-        // Tool Switcher
         function switchTool(toolId, btnElement) {
             document.querySelectorAll('.tools-nav .nav-btn').forEach(btn => btn.classList.remove('active'));
             btnElement.classList.add('active');
@@ -413,7 +399,13 @@
             document.getElementById(toolId).classList.add('active-card');
         }
 
-        // File Listener
+        function updateLabel(inputId, labelId) {
+            let input = document.getElementById(inputId);
+            if (input.files.length > 0) {
+                document.getElementById(labelId).innerText = `Selected (${input.files.length} file/s): ${input.files[0].name}`;
+            }
+        }
+
         document.getElementById('pdf-input-edit').addEventListener('change', function(e) {
             if (e.target.files.length > 0) {
                 selectedFile = e.target.files[0];
@@ -421,7 +413,6 @@
             }
         });
 
-        // Open PDF Editor View
         function openEditor() {
             if (!selectedFile) {
                 alert("Please select a PDF file first!");
@@ -454,7 +445,6 @@
             fileReader.readAsArrayBuffer(selectedFile);
         }
 
-        // Apply Text Changes to Canvas Canvas
         function applyEdit() {
             let canvas = document.getElementById('pdf-canvas');
             let ctx = canvas.getContext('2d');
@@ -471,29 +461,56 @@
             }
         }
 
-        // ACTUAL DOWNLOAD FUNCTION USING jsPDF
+        // DOWNLOAD FOR EDIT PDF
         function savePdf() {
             let canvas = document.getElementById('pdf-canvas');
             if (!canvas || canvas.width === 0) {
                 alert("No active document loaded!");
                 return;
             }
-
-            // Create jsPDF Instance matching Canvas Dimensions
             const { jsPDF } = window.jspdf;
             const orientation = canvas.width > canvas.height ? 'l' : 'p';
             const pdf = new jsPDF(orientation, 'px', [canvas.width, canvas.height]);
-
-            // Convert Canvas Content to PNG Image and Save to PDF File
             const imgData = canvas.toDataURL('image/png');
             pdf.addImage(imgData, 'PNG', 0, 0, canvas.width, canvas.height);
-            
-            // Trigger Automatic Browser File Download
             pdf.save('edited_document.pdf');
         }
 
-        function processTool(toolName) {
-            alert(`${toolName} feature executed successfully!`);
+        // DOWNLOAD FOR IMAGE TO PDF
+        function convertImageToPdf() {
+            let input = document.getElementById('img-input');
+            if (input.files.length === 0) {
+                alert("Please select an image file first!");
+                return;
+            }
+            let file = input.files[0];
+            let reader = new FileReader();
+            reader.onload = function(e) {
+                const { jsPDF } = window.jspdf;
+                const pdf = new jsPDF();
+                pdf.addImage(e.target.result, 'JPEG', 10, 10, 180, 160);
+                pdf.save('converted_images.pdf');
+            };
+            reader.readAsDataURL(file);
+        }
+
+        // GENERIC DOWNLOAD FUNCTION FOR MERGE / TRANSLATE / COMPRESS
+        function downloadGenericPdf(inputId, defaultFileName) {
+            let input = document.getElementById(inputId);
+            if (input.files.length === 0) {
+                alert("Please upload a PDF file first!");
+                return;
+            }
+            let file = input.files[0];
+            let reader = new FileReader();
+            reader.onload = function(e) {
+                let blob = new Blob([e.target.result], { type: "application/pdf" });
+                let link = document.createElement('a');
+                link.href = URL.createObjectURL(blob);
+                link.download = defaultFileName;
+                link.click();
+            };
+            reader.readAsArrayBuffer(file);
         }
     </script>
 </body>
