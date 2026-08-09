@@ -460,3 +460,13 @@ footer {
         transform: rotate(90deg);
     }
 }
+/* Brand Text Styling */
+.brand-text {
+  font-size: 2rem; /* Size bada karne ke liye (aap 2.5rem bhi kar sakte hain) */
+  font-weight: 800; /* Bold style */
+  letter-spacing: 1.5px; /* Stylish spacing */
+  color: #ffffff;
+  text-shadow: 0 2px 8px rgba(0, 0, 0, 0.25);
+  display: inline-block;
+  text-decoration: none;
+}
