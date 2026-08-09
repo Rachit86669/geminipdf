@@ -19,7 +19,7 @@
             color: #333;
         }
 
-        /* 1. Header Section - Expanded Title & Stylish GP Logo */
+        /* Header Section with GP Logo */
         header {
             background: linear-gradient(90deg, #2563eb, #1d4ed8);
             color: white;
@@ -34,7 +34,6 @@
             gap: 15px;
         }
 
-        /* Stylish GP Text Logo Badge */
         .gp-logo {
             background: linear-gradient(135deg, #ffffff 0%, #e2e8f0 100%);
             color: #1d4ed8;
@@ -94,15 +93,16 @@
             border-color: #2563eb;
         }
 
-        /* Main Workspace Container */
+        /* Container */
         .container {
             max-width: 1000px;
             margin: 0 auto;
             padding: 0 20px 40px 20px;
         }
 
-        /* Initial File Upload Screen */
-        .upload-card {
+        /* Generic Tool Card Styling */
+        .tool-card {
+            display: none; /* Hidden by default, toggled via JS */
             background: white;
             padding: 40px 30px;
             border-radius: 12px;
@@ -110,13 +110,17 @@
             box-shadow: 0 10px 25px rgba(0,0,0,0.05);
         }
 
-        .upload-card h2 {
+        .tool-card.active-card {
+            display: block; /* Show active tool card */
+        }
+
+        .tool-card h2 {
             font-size: 1.8rem;
             margin-bottom: 8px;
             color: #1e293b;
         }
 
-        .upload-card p {
+        .tool-card p {
             color: #64748b;
             margin-bottom: 25px;
         }
@@ -155,7 +159,7 @@
             background-color: #059669;
         }
 
-        /* 2. Interactive Page 2: Editor Workspace Screen */
+        /* Editor Workspace Canvas Screen */
         #editor-workspace {
             display: none;
             background: white;
@@ -164,7 +168,6 @@
             box-shadow: 0 10px 25px rgba(0,0,0,0.05);
         }
 
-        /* Toolbar Controls */
         .toolbar {
             display: flex;
             gap: 15px;
@@ -203,7 +206,6 @@
             background: transparent;
         }
 
-        /* Canvas PDF Document Viewer Frame */
         .pdf-viewer-container {
             border: 1px solid #e2e8f0;
             border-radius: 8px;
@@ -219,7 +221,7 @@
             background: white;
         }
 
-        /* Privacy Policy Section */
+        /* Privacy Policy */
         .privacy-section {
             margin-top: 50px;
             padding-top: 30px;
@@ -262,7 +264,6 @@
             text-decoration: underline;
         }
 
-        /* Footer Section */
         footer {
             text-align: center;
             padding: 20px;
@@ -274,7 +275,7 @@
 </head>
 <body>
 
-    <!-- Header Section with GP Badge Logo -->
+    <!-- Header Section -->
     <header>
         <div class="header-brand">
             <div class="gp-logo">GP</div>
@@ -283,58 +284,91 @@
         <div class="header-subtitle">Fast, free, and secure online tools for your documents</div>
     </header>
 
-    <!-- Header Navigation Bar -->
+    <!-- Navigation Buttons -->
     <div class="tools-nav">
-        <button class="nav-btn active">✏️ Edit PDF</button>
-        <button class="nav-btn">🖼️ Image to PDF</button>
-        <button class="nav-btn">📑 Merge PDFs</button>
-        <button class="nav-btn">🌐 Translate PDF</button>
-        <button class="nav-btn">🗜️ Compress PDF</button>
+        <button class="nav-btn active" onclick="switchTool('edit-tool', this)">✏️ Edit PDF</button>
+        <button class="nav-btn" onclick="switchTool('img2pdf-tool', this)">🖼️ Image to PDF</button>
+        <button class="nav-btn" onclick="switchTool('merge-tool', this)">📑 Merge PDFs</button>
+        <button class="nav-btn" onclick="switchTool('translate-tool', this)">🌐 Translate PDF</button>
+        <button class="nav-btn" onclick="switchTool('compress-tool', this)">🗜️ Compress PDF</button>
     </div>
 
     <div class="container">
-        <!-- Main Screen: File Selection Card -->
-        <div id="upload-screen" class="upload-card">
+        
+        <!-- 1. Edit PDF Tool -->
+        <div id="edit-tool" class="tool-card active-card">
             <h2>Edit PDF Document</h2>
             <p>Upload your PDF to edit text, adjust colors, modify letters, or replace image content.</p>
-            
-            <div class="drop-zone" onclick="document.getElementById('pdf-input').click()">
-                <p id="file-label">📄 Choose a PDF file or drag and drop it here</p>
-                <input type="file" id="pdf-input" accept="application/pdf">
+            <div class="drop-zone" onclick="document.getElementById('pdf-input-edit').click()">
+                <p id="file-label-edit">📄 Choose a PDF file or drag and drop it here</p>
+                <input type="file" id="pdf-input-edit" accept="application/pdf">
             </div>
-
             <button class="action-btn" onclick="openEditor()">Open PDF Editor</button>
         </div>
 
-        <!-- Page 2: Dedicated PDF Editor Workspace -->
+        <!-- 2. Image to PDF Tool -->
+        <div id="img2pdf-tool" class="tool-card">
+            <h2>Convert Image to PDF</h2>
+            <p>Convert JPG, PNG, or WEBP images into high-quality PDF documents.</p>
+            <div class="drop-zone" onclick="document.getElementById('img-input').click()">
+                <p id="file-label-img">🖼️ Choose image files or drag and drop here</p>
+                <input type="file" id="img-input" accept="image/*" multiple>
+            </div>
+            <button class="action-btn" onclick="processTool('Image to PDF')">Convert to PDF</button>
+        </div>
+
+        <!-- 3. Merge PDFs Tool -->
+        <div id="merge-tool" class="tool-card">
+            <h2>Merge Multiple PDFs</h2>
+            <p>Combine multiple PDF files into a single organized document.</p>
+            <div class="drop-zone" onclick="document.getElementById('merge-input').click()">
+                <p id="file-label-merge">📑 Select two or more PDF files</p>
+                <input type="file" id="merge-input" accept="application/pdf" multiple>
+            </div>
+            <button class="action-btn" onclick="processTool('Merge PDFs')">Merge PDF Files</button>
+        </div>
+
+        <!-- 4. Translate PDF Tool -->
+        <div id="translate-tool" class="tool-card">
+            <h2>Translate PDF File</h2>
+            <p>Translate your PDF content into different languages while keeping layout intact.</p>
+            <div class="drop-zone" onclick="document.getElementById('translate-input').click()">
+                <p id="file-label-translate">🌐 Select a PDF file to translate</p>
+                <input type="file" id="translate-input" accept="application/pdf">
+            </div>
+            <button class="action-btn" onclick="processTool('Translate PDF')">Translate Document</button>
+        </div>
+
+        <!-- 5. Compress PDF Tool -->
+        <div id="compress-tool" class="tool-card">
+            <h2>Compress PDF</h2>
+            <p>Reduce PDF file sizes for applications, forms, and easy sharing.</p>
+            <div class="drop-zone" onclick="document.getElementById('compress-input').click()">
+                <p id="file-label-compress">🗜️ Choose a PDF file or drag and drop it here</p>
+                <input type="file" id="compress-input" accept="application/pdf">
+            </div>
+            <button class="action-btn" onclick="processTool('Compress PDF')">Compress PDF</button>
+        </div>
+
+        <!-- Page 2 Workspace View for Edit PDF -->
         <div id="editor-workspace">
             <h3 style="margin-bottom: 15px; color: #1e293b;">PDF Editor Workspace</h3>
-            
-            <!-- Tools Bar -->
             <div class="toolbar">
-                <!-- Color Selector -->
                 <div class="tool-group">
                     <label>Change Color:</label>
                     <input type="color" id="textColor" value="#2563eb">
                 </div>
-
-                <!-- Text / Letter Editor -->
                 <div class="tool-group">
                     <label>Edit/Add Text:</label>
                     <input type="text" id="customText" placeholder="Type text or letters...">
                 </div>
-
-                <!-- Photo Replacement Module -->
                 <div class="tool-group">
                     <label>Replace/Add Photo:</label>
                     <input type="file" id="image-upload" accept="image/*">
                 </div>
-
                 <button class="nav-btn active" onclick="applyEdit()">Apply Changes</button>
                 <button class="action-btn" onclick="savePdf()" style="margin-left: auto;">Save & Download</button>
             </div>
-
-            <!-- Visual Render Box -->
             <div class="pdf-viewer-container">
                 <canvas id="pdf-canvas"></canvas>
             </div>
@@ -365,26 +399,39 @@
     <script>
         let selectedFile = null;
 
-        // PDF Selection Handler
-        document.getElementById('pdf-input').addEventListener('change', function(e) {
+        // Tool Switching Mechanism
+        function switchTool(toolId, btnElement) {
+            // Remove active class from all nav buttons
+            document.querySelectorAll('.tools-nav .nav-btn').forEach(btn => btn.classList.remove('active'));
+            // Add active class to clicked button
+            btnElement.classList.add('active');
+
+            // Hide all tool cards and workspace
+            document.querySelectorAll('.tool-card').forEach(card => card.classList.remove('active-card'));
+            document.getElementById('editor-workspace').style.display = 'none';
+
+            // Show selected tool card
+            document.getElementById(toolId).classList.add('active-card');
+        }
+
+        // File selection label listener for Edit PDF
+        document.getElementById('pdf-input-edit').addEventListener('change', function(e) {
             if (e.target.files.length > 0) {
                 selectedFile = e.target.files[0];
-                document.getElementById('file-label').innerText = "Selected File: " + selectedFile.name;
+                document.getElementById('file-label-edit').innerText = "Selected File: " + selectedFile.name;
             }
         });
 
-        // Open Workspace View
+        // Open Canvas Editor Workspace
         function openEditor() {
             if (!selectedFile) {
                 alert("Please select a PDF file first!");
                 return;
             }
 
-            // Hide upload screen & display editor
-            document.getElementById('upload-screen').style.display = 'none';
+            document.getElementById('edit-tool').classList.remove('active-card');
             document.getElementById('editor-workspace').style.display = 'block';
 
-            // PDF.js Engine Rendering
             let fileReader = new FileReader();
             fileReader.onload = function() {
                 let typedarray = new Uint8Array(this.result);
@@ -417,6 +464,10 @@
 
         function savePdf() {
             alert("Your edited PDF document is compiled and ready to download.");
+        }
+
+        function processTool(toolName) {
+            alert(`${toolName} feature executed successfully!`);
         }
     </script>
 </body>
