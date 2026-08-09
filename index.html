@@ -4,8 +4,11 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>GEMINI PDF - Online PDF Tools</title>
-    <!-- PDF.js Library Rendering Engine -->
+    <!-- PDF.js Library (Viewing PDF) -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.16.105/pdf.min.js"></script>
+    <!-- jsPDF Library (Downloading PDF) -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    
     <style>
         * {
             margin: 0;
@@ -19,7 +22,7 @@
             color: #333;
         }
 
-        /* Header Section with GP Logo */
+        /* Header Section */
         header {
             background: linear-gradient(90deg, #2563eb, #1d4ed8);
             color: white;
@@ -102,7 +105,7 @@
 
         /* Generic Tool Card Styling */
         .tool-card {
-            display: none; /* Hidden by default, toggled via JS */
+            display: none;
             background: white;
             padding: 40px 30px;
             border-radius: 12px;
@@ -111,7 +114,7 @@
         }
 
         .tool-card.active-card {
-            display: block; /* Show active tool card */
+            display: block;
         }
 
         .tool-card h2 {
@@ -399,22 +402,18 @@
     <script>
         let selectedFile = null;
 
-        // Tool Switching Mechanism
+        // Tool Switcher
         function switchTool(toolId, btnElement) {
-            // Remove active class from all nav buttons
             document.querySelectorAll('.tools-nav .nav-btn').forEach(btn => btn.classList.remove('active'));
-            // Add active class to clicked button
             btnElement.classList.add('active');
 
-            // Hide all tool cards and workspace
             document.querySelectorAll('.tool-card').forEach(card => card.classList.remove('active-card'));
             document.getElementById('editor-workspace').style.display = 'none';
 
-            // Show selected tool card
             document.getElementById(toolId).classList.add('active-card');
         }
 
-        // File selection label listener for Edit PDF
+        // File Listener
         document.getElementById('pdf-input-edit').addEventListener('change', function(e) {
             if (e.target.files.length > 0) {
                 selectedFile = e.target.files[0];
@@ -422,7 +421,7 @@
             }
         });
 
-        // Open Canvas Editor Workspace
+        // Open PDF Editor View
         function openEditor() {
             if (!selectedFile) {
                 alert("Please select a PDF file first!");
@@ -455,15 +454,42 @@
             fileReader.readAsArrayBuffer(selectedFile);
         }
 
-        // Action Trigger Functions
+        // Apply Text Changes to Canvas Canvas
         function applyEdit() {
+            let canvas = document.getElementById('pdf-canvas');
+            let ctx = canvas.getContext('2d');
             let color = document.getElementById('textColor').value;
             let text = document.getElementById('customText').value;
-            alert(`Modification applied!\nText: "${text}"\nSelected Color Code: ${color}`);
+
+            if (text.trim() !== "") {
+                ctx.fillStyle = color;
+                ctx.font = 'bold 28px Arial';
+                ctx.fillText(text, 50, 80);
+                alert("Changes applied to document canvas!");
+            } else {
+                alert("Please enter text to add.");
+            }
         }
 
+        // ACTUAL DOWNLOAD FUNCTION USING jsPDF
         function savePdf() {
-            alert("Your edited PDF document is compiled and ready to download.");
+            let canvas = document.getElementById('pdf-canvas');
+            if (!canvas || canvas.width === 0) {
+                alert("No active document loaded!");
+                return;
+            }
+
+            // Create jsPDF Instance matching Canvas Dimensions
+            const { jsPDF } = window.jspdf;
+            const orientation = canvas.width > canvas.height ? 'l' : 'p';
+            const pdf = new jsPDF(orientation, 'px', [canvas.width, canvas.height]);
+
+            // Convert Canvas Content to PNG Image and Save to PDF File
+            const imgData = canvas.toDataURL('image/png');
+            pdf.addImage(imgData, 'PNG', 0, 0, canvas.width, canvas.height);
+            
+            // Trigger Automatic Browser File Download
+            pdf.save('edited_document.pdf');
         }
 
         function processTool(toolName) {
